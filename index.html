@@ -1,0 +1,45 @@
+<body>
+    <div id="game-app">
+        <!-- ROLE SELECTION LOBBY -->
+        <div id="lobby-view" class="view">
+            <div class="control-panel">
+                <h2>Choose Your Role</h2>
+                <p>The first person to join gets first pick.</p>
+                <div class="lobby-buttons">
+                    <button id="claim-narrator" class="option-btn">Be the Narrator</button>
+                    <button id="claim-player" class="option-btn">Be the Player</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLAYER VIEW -->
+        <div id="player-view" class="view hidden">
+            <div class="image-area">
+                <div id="scene-placeholder">Waiting for the Narrator to set the scene...</div>
+                <img id="active-image" src="" class="hidden">
+            </div>
+            <div class="text-area">
+                <p id="story-display">The story will appear here.</p>
+                <div id="options-list"></div>
+            </div>
+        </div>
+
+        <!-- NARRATOR VIEW -->
+        <div id="narrator-view" class="view hidden">
+            <div class="control-panel">
+                <h2>Narrator Controls</h2>
+                <textarea id="story-box" placeholder="Tell the story..."></textarea>
+                <input type="text" id="image-hint" placeholder="Visual vibe (e.g. A rainy street in Tokyo)">
+                <div id="button-inputs">
+                    <input type="text" class="btn-name" placeholder="Option 1">
+                    <input type="text" class="btn-name" placeholder="Option 2">
+                    <input type="text" class="btn-name" placeholder="Option 3">
+                    <input type="text" class="btn-name" placeholder="Option 4">
+                    <input type="text" class="btn-name" placeholder="Option 5">
+                </div>
+                <button id="send-update" class="option-btn" style="background: #45a29e;">Update Game</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
