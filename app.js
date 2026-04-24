@@ -1,104 +1,102 @@
-// --- CONFIGURATION ---
 const API_KEY = "AIzaSyCGYDBGbSjQxRMxRRgpYNE_ZDjox62v2Nk";
-// Note: For a true multiplayer Discord experience, you'll eventually 
-// connect this to a Socket.io server URL.
-const socket = {
-    emit: (event, data) => console.log(`Sending ${event}:`, data),
-    on: (event, callback) => console.log(`Listening for ${event}`)
-};
-
 let myRole = null;
 
-// --- ROLE SELECTION ---
-document.getElementById('claim-narrator').onclick = () => {
+// --- 1. ROLE SELECTION ---
+// Using onclick directly in JS to ensure it catches the click
+document.getElementById('claim-narrator').addEventListener('click', () => {
     myRole = 'narrator';
     document.getElementById('lobby-view').classList.add('hidden');
     document.getElementById('narrator-view').classList.remove('hidden');
-};
+    console.log("Role assigned: Narrator");
+});
 
-document.getElementById('claim-player').onclick = () => {
+document.getElementById('claim-player').addEventListener('click', () => {
     myRole = 'player';
     document.getElementById('lobby-view').classList.add('hidden');
     document.getElementById('player-view').classList.remove('hidden');
-};
+    console.log("Role assigned: Player");
+});
 
-// --- NARRATOR ACTIONS ---
+// --- 2. NARRATOR UPDATES GAME ---
 document.getElementById('send-update').onclick = async () => {
     const story = document.getElementById('story-box').value;
-    const prompt = document.getElementById('image-hint').value;
-    
-    // Get all 5 inputs, but filter out the empty ones
-    const btnInputs = Array.from(document.querySelectorAll('.btn-name'));
-    const options = btnInputs.map(i => i.value.trim()).filter(v => v !== "");
+    const hint = document.getElementById('image-hint').value;
+    const options = Array.from(document.querySelectorAll('.btn-name'))
+                         .map(i => i.value.trim()).filter(v => v !== "");
 
-    if (options.length < 2) {
-        alert("Please provide at least 2 options for the player!");
-        return;
-    }
+    if (options.length < 2) return alert("You need at least 2 options!");
 
-    // Update UI to show loading
+    // UI Feedback
     const btn = document.getElementById('send-update');
-    btn.innerText = "Generating Vision...";
+    btn.innerText = "Generating...";
     btn.disabled = true;
 
-    try {
-        const imageUrl = await generateGeminiImage(prompt);
-        
-        const gameData = { story, options, imageUrl };
-        
-        // This is where you'd send to the other player via your server
-        // For testing locally, we'll just call the update function directly
-        updatePlayerUI(gameData);
-        
-        btn.innerText = "Update Game";
-        btn.disabled = false;
-        alert("Story pushed to Player!");
-    } catch (err) {
-        console.error(err);
-        btn.innerText = "Error - Try Again";
-        btn.disabled = false;
-    }
+    const imageUrl = await generateGeminiImage(hint);
+    
+    // Package data to send
+    const gameState = { story, options, imageUrl, sender: 'narrator' };
+    
+    // FOR LOCAL TESTING: We call the receive function directly
+    // In a real Discord bot, this would go through a server
+    processGameUpdate(gameState);
+
+    btn.innerText = "Update Game";
+    btn.disabled = false;
 };
 
-// --- SHARED FUNCTIONS ---
-function updatePlayerUI(data) {
-    // Update Story Text
-    document.getElementById('story-display').innerText = data.story;
-    
-    // Update Buttons (Clears old ones first)
-    const list = document.getElementById('options-list');
-    list.innerHTML = "";
-    
-    data.options.forEach(text => {
-        const b = document.createElement('button');
-        b.className = "option-btn";
-        b.innerText = text;
-        b.onclick = () => alert(`Player chose: ${text}`);
-        list.appendChild(b);
-    });
+// --- 3. THE HANDSHAKE (Processing Choices) ---
+function processGameUpdate(data) {
+    if (myRole === 'player' && data.sender === 'narrator') {
+        // Player's screen updates with Narrator's story
+        document.getElementById('story-display').innerText = data.story;
+        const list = document.getElementById('options-list');
+        list.innerHTML = "";
+        
+        data.options.forEach(text => {
+            const b = document.createElement('button');
+            b.className = "option-btn";
+            b.innerText = text;
+            b.onclick = () => playerMadeChoice(text);
+            list.appendChild(b);
+        });
 
-    // Update Image
-    const img = document.getElementById('active-image');
-    const placeholder = document.getElementById('scene-placeholder');
-    
-    if (data.imageUrl) {
+        const img = document.getElementById('active-image');
         img.src = data.imageUrl;
-        img.onload = () => {
-            img.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-        };
+        img.classList.remove('hidden');
+        document.getElementById('scene-placeholder').classList.add('hidden');
+    }
+
+    if (myRole === 'narrator' && data.sender === 'player') {
+        // Narrator sees the choice the player made
+        const notify = document.createElement('div');
+        notify.innerHTML = `<p style="color:#66fcf1; border-left: 3px solid; padding-left: 10px;">
+                            <strong>Player chose:</strong> ${data.choice}</p>`;
+        
+        const panel = document.querySelector('.control-panel');
+        panel.insertBefore(notify, document.getElementById('story-box'));
+        
+        // Clear the story box for the next part of the tale
+        document.getElementById('story-box').value = "";
     }
 }
 
+function playerMadeChoice(choice) {
+    console.log("Player clicked:", choice);
+    const choiceUpdate = { choice, sender: 'player' };
+    
+    // Tell the Narrator what happened
+    processGameUpdate(choiceUpdate);
+    
+    // Disable buttons so they can't click twice
+    document.getElementById('options-list').innerHTML = "<em>Waiting for Narrator's next move...</em>";
+}
+
 async function generateGeminiImage(hint) {
-    console.log("Calling Gemini 3 Flash Image for:", hint);
-    // This currently uses a high-quality placeholder. 
-    // To make the API work, you'll need to fetch from the Google AI endpoint.
-    return new Promise((resolve) => {
+    // Temporary high-quality placeholder logic
+    return new Promise(resolve => {
         setTimeout(() => {
-            // Using a dynamic placeholder that changes based on keywords in the hint
-            const randomID = Math.floor(Math.random() * 1000);
-            resolve(`https://picsum.photos/seed/${randomID}/1200/800?grayscale`);
-        }, 2000);
+            const id = Math.floor(Math.random() * 1000);
+            resolve(`https://picsum.photos/seed/${id}/1200/800?blur=2`);
+        }, 1500);
     });
 }

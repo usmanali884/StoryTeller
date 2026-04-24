@@ -1,134 +1,59 @@
-:root {
-    --bg-dark: #0b0c10;
-    --bg-panel: #1f2833;
-    --accent-teal: #66fcf1;
-    --accent-dark-teal: #45a29e;
-    --text-main: #c5c6c7;
-    --text-bright: #ffffff;
-}
-
 body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #0b0c10;
+    color: #c5c6c7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
-}
-
-#game-app {
-    width: 100%;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* LOBBY STYLING */
-#lobby-view {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: radial-gradient(circle at center, #1f2833 0%, #0b0c10 100%);
-}
-
-#lobby-view h2 {
-    font-size: 2.5rem;
-    color: var(--accent-teal);
-    margin-bottom: 0.5rem;
-    letter-spacing: -1px;
-}
-
-.lobby-buttons {
-    display: flex;
-    gap: 20px;
-    margin-top: 30px;
-}
-
-/* CARDS / PANELS */
-.control-panel, .text-area {
-    background: rgba(31, 40, 51, 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 30px;
-}
-
-/* PLAYER IMAGE AREA */
-.image-area {
-    flex: 3;
-    position: relative;
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
-.image-area img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.7; /* Gives it that dark, moody atmosphere */
-    transition: opacity 1s ease-in-out;
-}
-
-#scene-placeholder {
-    font-style: italic;
-    color: var(--accent-dark-teal);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-}
-
-/* BUTTONS */
-.option-btn {
-    background: transparent;
-    border: 1px solid var(--accent-dark-teal);
-    color: var(--accent-teal);
-    padding: 12px 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-}
-
-.option-btn:hover:not(:disabled) {
-    background: var(--accent-dark-teal);
-    color: var(--bg-dark);
-    box-shadow: 0 0 15px rgba(102, 252, 241, 0.3);
-}
-
-.option-btn:disabled {
-    border-color: #333;
-    color: #555;
-    cursor: not-allowed;
-}
-
-/* INPUTS */
-textarea, input[type="text"] {
-    background: #0b0c10;
-    border: 1px solid #45a29e;
-    color: var(--text-bright);
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 0.9rem;
-}
-
-textarea:focus, input:focus {
-    outline: none;
-    border-color: var(--accent-teal);
-    box-shadow: 0 0 5px rgba(102, 252, 241, 0.2);
 }
 
 .hidden { display: none !important; }
+
+#game-app { width: 100%; max-width: 1200px; display: flex; }
+
+/* The Lobby */
+#lobby-view { 
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 20px; 
+    width: 100%;
+}
+
+.view { width: 100%; display: flex; flex-direction: column; }
+
+/* The Action Areas */
+.image-area { flex: 2; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.image-area img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+
+.text-area, .control-panel { 
+    flex: 1; 
+    padding: 40px; 
+    background: #1f2833; 
+    border-top: 2px solid #45a29e; 
+}
+
+/* Buttons and Inputs */
+.option-btn { 
+    background: transparent; 
+    border: 1px solid #66fcf1; 
+    color: #66fcf1; 
+    padding: 10px 20px; 
+    margin-right: 10px; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.option-btn:hover { background: #66fcf1; color: #0b0c10; }
+
+textarea, input { 
+    width: 100%; 
+    background: #0b0c10; 
+    border: 1px solid #45a29e; 
+    color: white; 
+    padding: 10px; 
+    margin-bottom: 15px; 
+}
+
+#send-update { background: #45a29e; color: white; border: none; padding: 15px; cursor: pointer; width: 100%; }
